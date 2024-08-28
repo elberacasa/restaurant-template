@@ -1,0 +1,13 @@
+html {
+  overflow-y: scroll;
+}
+
+body {
+  padding-right: calc(100vw - 100%);
+}
+
+@media (max-width: 768px) {
+  body {
+    padding-right: 0;
+  }
+}
