@@ -7,11 +7,11 @@ function Navigation() {
   const location = useLocation();
 
   const navItems = [
-    { name: 'Inicio', path: '/', icon: FaHome },
-    { name: 'Menú', path: '/menu', icon: FaUtensils },
+    { name: 'Inicio', path: '/inicio', icon: FaHome },
     { name: 'Ubicaciones', path: '/ubicaciones', icon: FaMapMarkerAlt },
-    { name: 'Contacto', path: '/contacto', icon: FaEnvelope },
+    { name: 'Menú', path: '/', icon: FaUtensils },
     { name: 'Ofertas', path: '/ofertas', icon: FaGift },
+    { name: 'Contacto', path: '/contacto', icon: FaEnvelope },
   ];
 
   return (
@@ -52,8 +52,17 @@ function Navigation() {
               to={item.path}
               className={`text-white flex flex-col items-center justify-center w-full h-full ${location.pathname === item.path ? 'bg-blue-600' : ''}`}
             >
-              <item.icon className="text-xl mb-1" />
-              <span className="text-xs">{item.name}</span>
+              <motion.div
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.95 }}
+                className="flex flex-col items-center"
+                initial={{ y: 10, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ duration: 0.3 }}
+              >
+                <item.icon className={`text-2xl mb-1 ${item.name === 'Menú' ? 'text-3xl text-yellow-300' : ''}`} />
+                <span className={`text-xs text-center ${item.name === 'Menú' ? 'font-bold' : ''}`}>{item.name}</span>
+              </motion.div>
             </Link>
           ))}
         </div>

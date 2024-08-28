@@ -1,5 +1,6 @@
 html {
   overflow-y: scroll;
+  scroll-behavior: smooth;
 }
 
 body {
@@ -9,5 +10,27 @@ body {
 @media (max-width: 768px) {
   body {
     padding-right: 0;
+    padding-bottom: 64px; /* Adjust this value based on your bottom nav height */
   }
+}
+
+/* Add this to create a fade effect at the bottom of the page */
+.fade-bottom {
+  position: relative;
+}
+
+.fade-bottom::after {
+  content: '';
+  position: absolute;
+  bottom: 64px; /* Adjust this value to match the height of your bottom navigation */
+  left: 0;
+  right: 0;
+  height: 100px;
+  background: linear-gradient(to top, rgba(255,255,255,1), rgba(255,255,255,0));
+  pointer-events: none;
+}
+
+/* Ensure that the main content doesn't get hidden behind the bottom navigation */
+main {
+  padding-bottom: 80px; /* Adjust this value based on your bottom nav height plus some extra space */
 }

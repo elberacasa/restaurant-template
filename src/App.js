@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useScroll, useSpring } from "framer-motion";
 import Header from './components/Header';
 import Navigation from './components/Navigation';
 import Home from './components/Home';
@@ -21,17 +22,28 @@ function App() {
 
 function AppContent() {
   const location = useLocation();
+  const ref = useRef(null);
+  const { scrollYProgress } = useScroll({ container: ref });
+  const scaleX = useSpring(scrollYProgress, {
+    stiffness: 100,
+    damping: 30,
+    restDelta: 0.001
+  });
 
   return (
     <div className="App flex flex-col min-h-screen bg-white overflow-x-hidden">
       <Header />
       <Navigation />
-      <main className="flex-grow pb-16 md:pb-0">
+      <motion.div
+        className="h-1 bg-blue-500 fixed top-0 left-0 right-0 origin-left z-50"
+        style={{ scaleX }}
+      />
+      <main ref={ref} className="flex-grow pb-24 md:pb-0 overflow-y-auto">
         <AnimatePresence mode="wait">
           <Routes location={location} key={location.pathname}>
             {[ 
-              { path: "/", component: Home, key: "home" },
-              { path: "/menu", component: Menu, key: "menu" },
+              { path: "/", component: Menu, key: "menu" },
+              { path: "/inicio", component: Home, key: "home" },
               { path: "/ubicaciones", component: Ubicaciones, key: "ubicaciones" },
               { path: "/contacto", component: Contacto, key: "contacto" },
               { path: "/ofertas", component: Ofertas, key: "ofertas" }
@@ -41,10 +53,10 @@ function AppContent() {
                 path={path} 
                 element={
                   <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 0.3 }}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -20 }}
+                    transition={{ duration: 0.3, ease: "easeInOut" }}
                   >
                     <Component />
                   </motion.div>

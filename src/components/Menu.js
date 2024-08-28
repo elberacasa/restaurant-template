@@ -1,29 +1,38 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FaHamburger, FaLeaf, FaDollarSign, FaChevronRight, FaChevronLeft } from 'react-icons/fa';
+import { FaHamburger, FaDollarSign, FaChevronRight, FaChevronLeft } from 'react-icons/fa';
 
 const menuItems = [
-  { id: 1, name: 'Hamburguesa Clásica', price: 8.99, category: 'Hamburguesas', isVegan: false, image: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80' },
-  { id: 2, name: 'Hamburguesa con Queso', price: 9.99, category: 'Hamburguesas', isVegan: false, image: 'https://images.unsplash.com/photo-1551615593-ef5fe247e8f7?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80' },
-  { id: 3, name: 'Hamburguesa Vegetariana', price: 7.99, category: 'Hamburguesas', isVegan: true, image: 'https://images.unsplash.com/photo-1525059696034-4967a8e1dca2?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80' },
-  { id: 4, name: 'Papas Fritas', price: 3.99, category: 'Acompañantes', isVegan: true, image: 'https://images.unsplash.com/photo-1573080496219-bf8c9854f1f1?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80' },
-  { id: 5, name: 'Aros de Cebolla', price: 4.99, category: 'Acompañantes', isVegan: true, image: 'https://images.unsplash.com/photo-1639024471283-03518883512d?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80' },
-  { id: 6, name: 'Refresco', price: 1.99, category: 'Bebidas', isVegan: true, image: 'https://images.unsplash.com/photo-1622483767028-3f66f32aef97?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80' },
-  { id: 7, name: 'Batido', price: 4.99, category: 'Bebidas', isVegan: false, image: 'https://images.unsplash.com/photo-1572490122747-3968b75cc699?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80' },
-  { id: 8, name: 'Nuggets de Pollo', price: 6.99, category: 'Acompañantes', isVegan: false, image: 'https://images.unsplash.com/photo-1562967914-608f82629710?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80' },
-  { id: 9, name: 'Hamburguesa BBQ', price: 10.99, category: 'Hamburguesas', isVegan: false, image: 'https://images.unsplash.com/photo-1594212699903-ec8a3eca50f5?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80' },
-  { id: 10, name: 'Ensalada César', price: 7.99, category: 'Ensaladas', isVegan: false, image: 'https://images.unsplash.com/photo-1550304943-4f24f54ddde9?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80' },
+  { id: 1, name: 'Hamburguesa Clásica', price: 8.99, category: 'Hamburguesas', image: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80' },
+  { id: 2, name: 'Hamburguesa con Queso', price: 9.99, category: 'Hamburguesas', image: 'https://images.unsplash.com/photo-1551615593-ef5fe247e8f7?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80' },
+  { id: 3, name: 'Hamburguesa Vegetariana', price: 7.99, category: 'Hamburguesas', image: 'https://images.unsplash.com/photo-1525059696034-4967a8e1dca2?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80' },
+  { id: 4, name: 'Papas Fritas', price: 3.99, category: 'Acompañantes', image: 'https://images.unsplash.com/photo-1630384060421-cb20d0e0649d?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80' },
+  { id: 5, name: 'Aros de Cebolla', price: 4.99, category: 'Acompañantes', image: 'https://images.unsplash.com/photo-1639024471283-03518883512d?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80' },
+  { id: 6, name: 'Refresco', price: 1.99, category: 'Bebidas', image: 'https://images.unsplash.com/photo-1622483767028-3f66f32aef97?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80' },
+  { id: 7, name: 'Batido', price: 4.99, category: 'Bebidas', image: 'https://images.unsplash.com/photo-1572490122747-3968b75cc699?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80' },
+  { id: 8, name: 'Nuggets de Pollo', price: 6.99, category: 'Acompañantes', image: 'https://images.unsplash.com/photo-1562967914-608f82629710?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80' },
+  { id: 9, name: 'Hamburguesa BBQ', price: 10.99, category: 'Hamburguesas', image: 'https://images.unsplash.com/photo-1594212699903-ec8a3eca50f5?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80' },
+  { id: 10, name: 'Ensalada César', price: 7.99, category: 'Ensaladas', image: 'https://images.unsplash.com/photo-1550304943-4f24f54ddde9?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80' },
+  // New items
+  { id: 11, name: 'Hamburguesa Doble', price: 12.99, category: 'Hamburguesas', image: 'https://images.unsplash.com/photo-1586816001966-79b736744398?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80' },
+  { id: 12, name: 'Wrap de Pollo', price: 8.99, category: 'Wraps', image: 'https://images.unsplash.com/photo-1626700051175-6818013e1d4f?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80' },
+  { id: 13, name: 'Ensalada Griega', price: 8.99, category: 'Ensaladas', image: 'https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80' },
+  { id: 14, name: 'Hamburguesa de Pescado', price: 9.99, category: 'Hamburguesas', image: 'https://images.unsplash.com/photo-1530469912745-a215c6b256ea?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80' },
+  { id: 15, name: 'Palitos de Mozzarella', price: 5.99, category: 'Acompañantes', image: 'https://images.unsplash.com/photo-1531749668029-2db88e4276c7?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80' },
+  { id: 16, name: 'Limonada Casera', price: 2.99, category: 'Bebidas', image: 'https://images.unsplash.com/photo-1621263764928-df1444c5e859?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80' },
+  { id: 17, name: 'Helado de Vainilla', price: 3.99, category: 'Postres', image: 'https://images.unsplash.com/photo-1570197571499-166b36435e9f?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80' },
+  { id: 18, name: 'Brownie con Helado', price: 5.99, category: 'Postres', image: 'https://images.unsplash.com/photo-1606313564200-e75d5e30476c?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80' },
+  { id: 19, name: 'Nachos con Queso', price: 6.99, category: 'Acompañantes', image: 'https://images.unsplash.com/photo-1513456852971-30c0b8199d4d?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80' },
+  { id: 20, name: 'Café Americano', price: 2.49, category: 'Bebidas', image: 'https://images.unsplash.com/photo-1521302080334-4bebac2763a6?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80' },
 ];
 
 function Menu() {
   const [selectedCategories, setSelectedCategories] = useState([]);
-  const [veganOnly, setVeganOnly] = useState(false);
   const [priceRange, setPriceRange] = useState([0, 20]);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const filteredItems = menuItems.filter(item => 
     (selectedCategories.length === 0 || selectedCategories.includes(item.category)) &&
-    (!veganOnly || item.isVegan) &&
     (item.price >= priceRange[0] && item.price <= priceRange[1])
   );
 
@@ -73,17 +82,6 @@ function Menu() {
                 {cat}
               </label>
             ))}
-          </div>
-          <div>
-            <label className="flex items-center">
-              <input 
-                type="checkbox" 
-                checked={veganOnly} 
-                onChange={(e) => setVeganOnly(e.target.checked)}
-                className="form-checkbox h-5 w-5 text-blue-600 mr-2"
-              />
-              Solo vegano
-            </label>
           </div>
           <div>
             <h4 className="font-semibold mb-2">Rango de precios</h4>
@@ -136,17 +134,25 @@ function Menu() {
                 hidden: { y: 20, opacity: 0 },
                 visible: { y: 0, opacity: 1 }
               }}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
               className="bg-white rounded-lg shadow-md overflow-hidden"
             >
-              <img src={item.image} alt={item.name} className="w-full h-40 object-cover" />
+              <motion.img 
+                src={item.image} 
+                alt={item.name} 
+                className="w-full h-40 object-cover"
+                whileHover={{ scale: 1.1 }}
+                transition={{ duration: 0.3 }}
+              />
               <div className="p-4">
                 <h3 className="text-lg font-semibold mb-2">{item.name}</h3>
-                <p className="text-gray-600 mb-2">{item.category} {item.isVegan && '(Vegano)'}</p>
+                <p className="text-gray-600 mb-2">{item.category}</p>
                 <div className="flex justify-between items-center">
                   <span className="text-lg font-bold text-blue-600">${item.price.toFixed(2)}</span>
                   <motion.button 
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.9 }}
                     className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-yellow-300 hover:text-blue-600 transition duration-300 ease-in-out text-sm"
                   >
                     Añadir al carrito
