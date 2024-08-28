@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaFilter, FaChevronRight, FaChevronLeft, FaGem } from 'react-icons/fa';
+import Carousel from './Carousel'; // We'll create this component next
 
 const menuItems = [
   { id: 1, name: 'Hamburguesa Clásica', price: 8.99, category: 'Hamburguesas', image: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80' },
@@ -65,6 +66,8 @@ function Menu() {
     return () => window.removeEventListener('resize', handleResize);
   }, [isSidebarOpen]);
 
+  const featuredItems = menuItems.slice(0, 5); // Select first 5 items for the carousel
+
   return (
     <div className="container mx-auto p-4 flex flex-col md:flex-row relative">
       <motion.div
@@ -79,10 +82,10 @@ function Menu() {
         >
           <FaChevronLeft size={24} />
         </button>
-        <h3 className="text-xl font-bold mb-4">Filtros</h3>
+        <h3 className="text-xl font-bold mb-4 md:hidden">Filtros</h3>
         <div className="space-y-4">
           <div>
-            <h4 className="font-semibold mb-2">Categoría</h4>
+            <h4 className="font-semibold mb-2 md:hidden">Categoría</h4>
             {categories.map(cat => (
               <label key={cat} className="flex items-center mb-2">
                 <input 
@@ -96,7 +99,7 @@ function Menu() {
             ))}
           </div>
           <div>
-            <h4 className="font-semibold mb-2">Rango de precios</h4>
+            <h4 className="font-semibold mb-2 md:hidden">Rango de precios</h4>
             <input 
               type="range" 
               min="0" 
@@ -106,7 +109,7 @@ function Menu() {
               onChange={(e) => setPriceRange([priceRange[0], parseFloat(e.target.value)])}
               className="w-full"
             />
-            <div className="flex justify-between">
+            <div className="flex justify-between md:hidden">
               <span>${priceRange[0]}</span>
               <span>${priceRange[1]}</span>
             </div>
@@ -133,6 +136,12 @@ function Menu() {
             <FaGem size={24} />
           </button>
         </div>
+
+        {/* New Carousel component */}
+        <div className="mb-8">
+          <Carousel items={featuredItems} />
+        </div>
+
         <motion.div 
           className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"
           initial="hidden"

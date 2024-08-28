@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useScroll, useSpring } from "framer-motion";
@@ -29,6 +29,13 @@ function AppContent() {
     damping: 30,
     restDelta: 0.001
   });
+
+  useEffect(() => {
+    // Scroll to top when location changes
+    window.scrollTo(0, 0);
+    // If using a ref for the main content:
+    // ref.current.scrollTo(0, 0);
+  }, [location]);
 
   return (
     <div className="App flex flex-col min-h-screen bg-white overflow-x-hidden">
