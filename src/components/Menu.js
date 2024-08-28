@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FaHamburger, FaDollarSign, FaChevronRight, FaChevronLeft } from 'react-icons/fa';
+import { FaFilter, FaChevronRight, FaChevronLeft, FaGem } from 'react-icons/fa';
 
 const menuItems = [
   { id: 1, name: 'Hamburguesa Clásica', price: 8.99, category: 'Hamburguesas', image: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80' },
@@ -30,6 +30,7 @@ function Menu() {
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [priceRange, setPriceRange] = useState([0, 20]);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [showNewsletter, setShowNewsletter] = useState(false);
 
   const filteredItems = menuItems.filter(item => 
     (selectedCategories.length === 0 || selectedCategories.includes(item.category)) &&
@@ -53,17 +54,28 @@ function Menu() {
     closed: { x: '-100%', transition: { type: 'spring', stiffness: 300, damping: 30 } },
   };
 
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth > 768 && isSidebarOpen) {
+        setIsSidebarOpen(false);
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [isSidebarOpen]);
+
   return (
-    <div className="container mx-auto p-4 flex">
+    <div className="container mx-auto p-4 flex flex-col md:flex-row relative">
       <motion.div
         initial="closed"
         animate={isSidebarOpen ? 'open' : 'closed'}
         variants={sidebarVariants}
-        className="fixed left-0 top-0 h-full bg-white shadow-lg z-20 w-64 p-4"
+        className="fixed left-0 top-0 h-full bg-white shadow-lg z-20 w-64 p-4 md:relative md:w-auto md:shadow-none md:p-0 md:mr-4"
       >
         <button
           onClick={() => setIsSidebarOpen(false)}
-          className="absolute right-4 top-4 text-gray-500 hover:text-gray-700"
+          className="absolute right-4 top-4 text-gray-500 hover:text-gray-700 md:hidden"
         >
           <FaChevronLeft size={24} />
         </button>
@@ -102,17 +114,25 @@ function Menu() {
         </div>
       </motion.div>
       
-      <div className="fixed left-0 top-1/2 transform -translate-y-1/2 bg-white shadow-lg rounded-r-lg z-10">
+      <div className="fixed left-0 top-1/2 transform -translate-y-1/2 bg-white shadow-lg rounded-r-lg z-10 md:hidden">
         <button
           onClick={() => setIsSidebarOpen(true)}
           className="p-2 text-gray-500 hover:text-gray-700"
         >
-          <FaChevronRight size={24} />
+          <FaFilter size={24} />
         </button>
       </div>
 
       <div className="w-full">
-        <h2 className="text-3xl font-bold text-gray-800 mb-6">Nuestro Menú</h2>
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-3xl font-bold text-gray-800">Nuestro Menú</h2>
+          <button
+            onClick={() => setShowNewsletter(true)}
+            className="bg-yellow-400 text-blue-600 p-2 rounded-full hover:bg-yellow-300 transition duration-300 ease-in-out"
+          >
+            <FaGem size={24} />
+          </button>
+        </div>
         <motion.div 
           className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"
           initial="hidden"
@@ -163,6 +183,34 @@ function Menu() {
           ))}
         </motion.div>
       </div>
+
+      <AnimatePresence>
+        {showNewsletter && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+            onClick={() => setShowNewsletter(false)}
+          >
+            <motion.div
+              initial={{ y: 50, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: 50, opacity: 0 }}
+              className="bg-white p-6 rounded-lg max-w-md w-full m-4"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <h3 className="text-2xl font-bold mb-4">¡Ofertas Especiales!</h3>
+              <p className="mb-4">Regístrate para recibir un 22% de descuento en tu próxima compra y más ofertas exclusivas.</p>
+              <form className="space-y-4">
+                <input type="email" placeholder="Tu correo electrónico" className="w-full p-2 border rounded" />
+                <button type="submit" className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600 transition duration-300">Registrarse</button>
+              </form>
+              <button onClick={() => setShowNewsletter(false)} className="mt-4 text-sm text-gray-500 hover:text-gray-700">Cerrar</button>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
