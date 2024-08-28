@@ -147,7 +147,7 @@ function Menu() {
                   <motion.button 
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
-                    className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 transition duration-300 ease-in-out text-sm"
+                    className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-yellow-300 hover:text-blue-600 transition duration-300 ease-in-out text-sm"
                   >
                     Añadir al carrito
                   </motion.button>
