@@ -69,8 +69,11 @@ function Menu({ addToCart, cartItems, updateQuantity }) {
 
   return (
     <div className="container mx-auto p-4 flex flex-col md:flex-row relative">
+      {/* Sidebar for filters */}
       <div
-        className={`fixed left-0 top-0 h-full bg-white shadow-lg z-20 w-64 p-4 md:relative md:w-auto md:shadow-none md:p-0 md:mr-4 ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} transition-transform duration-300 ease-in-out`}
+        className={`fixed md:static left-0 top-0 h-full bg-white shadow-lg z-20 w-64 p-4 md:w-1/4 md:shadow-none md:p-0 md:mr-4 ${
+          isSidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'
+        } transition-transform duration-300 ease-in-out`}
       >
         <button
           onClick={() => setIsSidebarOpen(false)}
@@ -78,10 +81,10 @@ function Menu({ addToCart, cartItems, updateQuantity }) {
         >
           <FaChevronLeft size={24} />
         </button>
-        <h3 className="text-xl font-bold mb-4 md:hidden">Filtros</h3>
+        <h3 className="text-xl font-bold mb-4">Filtros</h3>
         <div className="space-y-4">
           <div>
-            <h4 className="font-semibold mb-2 md:hidden">Categoría</h4>
+            <h4 className="font-semibold mb-2">Categoría</h4>
             {categories.map(cat => (
               <label key={cat} className="flex items-center mb-2">
                 <input 
@@ -95,7 +98,7 @@ function Menu({ addToCart, cartItems, updateQuantity }) {
             ))}
           </div>
           <div>
-            <h4 className="font-semibold mb-2 md:hidden">Rango de precios</h4>
+            <h4 className="font-semibold mb-2">Rango de precios</h4>
             <input 
               type="range" 
               min="0" 
@@ -105,7 +108,7 @@ function Menu({ addToCart, cartItems, updateQuantity }) {
               onChange={(e) => setPriceRange([priceRange[0], parseFloat(e.target.value)])}
               className="w-full"
             />
-            <div className="flex justify-between md:hidden">
+            <div className="flex justify-between">
               <span>${priceRange[0]}</span>
               <span>${priceRange[1]}</span>
             </div>
@@ -113,6 +116,7 @@ function Menu({ addToCart, cartItems, updateQuantity }) {
         </div>
       </div>
       
+      {/* Mobile filter button */}
       <div className="fixed left-0 top-1/2 transform -translate-y-1/2 bg-white shadow-lg rounded-r-lg z-10 md:hidden">
         <button
           onClick={() => setIsSidebarOpen(true)}
@@ -122,7 +126,8 @@ function Menu({ addToCart, cartItems, updateQuantity }) {
         </button>
       </div>
 
-      <div className="w-full">
+      {/* Main content */}
+      <div className="w-full md:w-3/4">
         <div className="flex flex-col sm:flex-row justify-between items-center mb-6">
           <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-4 sm:mb-0">Nuestro Menú</h2>
           <button
