@@ -168,8 +168,12 @@ function Menu({ addToCart, cartItems, updateQuantity }) {
 
       {/* Main content */}
       <div className={`w-full ${isDesktop ? 'md:w-3/4' : ''}`}>
-        <div className="flex flex-col sm:flex-row justify-between items-center mb-8 bg-white p-4 rounded-lg shadow-md">
-          <h2 className="text-3xl sm:text-4xl font-bold text-gray-800 mb-4 sm:mb-0">Nuestro Menú</h2>
+        {/* New component for working hours */}
+        <div className="bg-blue-500 text-white py-2 px-4 rounded-lg shadow-md mb-4 text-center">
+          <p className="text-sm md:text-base">Abierto de 8:00 AM a 8:00 PM</p>
+        </div>
+
+        <div className="flex justify-end items-center mb-8 bg-white p-4 rounded-lg shadow-md">
           <div className="flex items-center space-x-4">
             <button
               onClick={() => setViewMode(viewMode === 'grid' ? 'list' : 'grid')}

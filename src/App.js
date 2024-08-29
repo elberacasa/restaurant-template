@@ -14,6 +14,7 @@ import Checkout from './components/Checkout';
 import OrderSummary from './components/OrderSummary';
 import Footer from './components/Footer';
 import './global.css';
+import { ThemeProvider } from './components/ThemeProvider';
 
 function App() {
   const [cartItems, setCartItems] = useState([]);
@@ -47,15 +48,17 @@ function App() {
   };
 
   return (
-    <Router>
-      <ScrollToTop />
-      <AppContent 
-        cartItems={cartItems}
-        addToCart={addToCart}
-        removeFromCart={removeFromCart}
-        updateQuantity={updateQuantity}
-      />
-    </Router>
+    <ThemeProvider>
+      <Router>
+        <ScrollToTop />
+        <AppContent 
+          cartItems={cartItems}
+          addToCart={addToCart}
+          removeFromCart={removeFromCart}
+          updateQuantity={updateQuantity}
+        />
+      </Router>
+    </ThemeProvider>
   );
 }
 

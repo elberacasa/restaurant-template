@@ -2,10 +2,13 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { FaShoppingCart } from 'react-icons/fa';
+import { restaurantConfig } from '../config';
 
 function Header({ cartItemCount }) {
+  const { name, colors } = restaurantConfig;
+
   return (
-    <header className="bg-blue-600 text-white p-4 shadow-md">
+    <header style={{ backgroundColor: colors.primary }} className="text-white p-4 shadow-md">
       <div className="container mx-auto flex justify-between items-center">
         <Link to="/" className="mb-0">
           <motion.h1 
@@ -15,10 +18,12 @@ function Header({ cartItemCount }) {
             transition={{ duration: 0.5 }}
           >
             <span className="inline-block transform hover:scale-110 transition-transform duration-200">
-              <span className="text-yellow-300">B</span>urger
+              <span style={{ color: colors.secondary }}>{name.charAt(0)}</span>
+              {name.slice(1, name.indexOf(' '))}
             </span>{' '}
             <span className="inline-block transform hover:scale-110 transition-transform duration-200">
-              <span className="text-yellow-300">P</span>aradise
+              <span style={{ color: colors.secondary }}>{name.split(' ')[1].charAt(0)}</span>
+              {name.split(' ')[1].slice(1)}
             </span>
           </motion.h1>
         </Link>
