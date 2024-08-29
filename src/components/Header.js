@@ -1,14 +1,15 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
+import { FaShoppingCart } from 'react-icons/fa';
 
-function Header() {
+function Header({ cartItemCount }) {
   return (
     <header className="bg-blue-600 text-white p-4 shadow-md">
-      <div className="container mx-auto flex flex-col sm:flex-row justify-between items-center">
-        <Link to="/" className="mb-4 sm:mb-0">
+      <div className="container mx-auto flex justify-between items-center">
+        <Link to="/" className="mb-0">
           <motion.h1 
-            className="text-2xl sm:text-3xl font-extrabold"
+            className="text-xl sm:text-2xl md:text-3xl font-extrabold"
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
@@ -21,13 +22,14 @@ function Header() {
             </span>
           </motion.h1>
         </Link>
-        <motion.img 
-          src="https://images.unsplash.com/photo-1586190848861-99aa4a171e90?ixlib=rb-1.2.1&auto=format&fit=crop&w=80&h=80&q=80" 
-          alt="Logo de Burger" 
-          className="rounded-full w-16 h-16 object-cover border-2 border-yellow-300"
-          whileHover={{ scale: 1.1 }}
-          transition={{ duration: 0.3 }}
-        />
+        <Link to="/cart" className="relative">
+          <FaShoppingCart size={24} />
+          {cartItemCount > 0 && (
+            <span className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs">
+              {cartItemCount}
+            </span>
+          )}
+        </Link>
       </div>
     </header>
   );
