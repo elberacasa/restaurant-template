@@ -17,7 +17,7 @@ function Footer() {
               <span className="text-yellow-300">B</span>urger{' '}
               <span className="text-yellow-300">P</span>aradise
             </h3>
-            <p className="text-blue-200">Deliciosas hamburguesas, gran ambiente</p>
+            <p className="text-blue-200">Deliciosas hamburguesas, mejor ambiente</p>
           </motion.div>
           <motion.div 
             initial={{ opacity: 0, y: 20 }}

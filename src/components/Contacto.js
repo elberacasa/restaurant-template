@@ -15,7 +15,7 @@ function Contacto() {
       
       {/* WhatsApp Button */}
       <motion.a
-        href="https://wa.me/582129524111"
+        href="https://wa.me/582129524112"
         target="_blank"
         rel="noopener noreferrer"
         className="absolute top-4 right-4 bg-green-500 text-white p-3 rounded-full shadow-lg flex items-center justify-center"
