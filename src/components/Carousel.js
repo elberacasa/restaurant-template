@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { useKeenSlider } from 'keen-slider/react';
 import 'keen-slider/keen-slider.min.css';
 
-function Carousel({ items, itemsToShow, itemsToScroll }) {
+function Carousel({ items, itemsToShow, itemsToScroll, onItemClick }) {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [loaded, setLoaded] = useState(false);
   const [sliderRef, instanceRef] = useKeenSlider({
@@ -49,9 +49,10 @@ function Carousel({ items, itemsToShow, itemsToScroll }) {
         {items.map((item, index) => (
           <div key={item.id} className="keen-slider__slide">
             <motion.div
-              className="bg-white rounded-lg shadow-md overflow-hidden"
+              className="bg-white rounded-lg shadow-md overflow-hidden cursor-pointer"
               whileHover={{ scale: 1.05 }}
               transition={{ duration: 0.3 }}
+              onClick={() => onItemClick(item)}
             >
               <img src={item.image} alt={item.name} className="w-full h-40 object-cover" />
               <div className="p-4">

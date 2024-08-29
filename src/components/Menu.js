@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import Carousel from './Carousel';
 import DesktopSidebar from './DesktopSidebar';
 import MobileSidebar from './MobileSidebar';
+import ItemDetails from './ItemDetails';
 
 const menuItems = [
   { id: 1, name: 'Hamburguesa Clásica', price: 8.99, category: 'Hamburguesas', image: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80' },
@@ -36,6 +37,8 @@ function Menu({ addToCart, cartItems, updateQuantity }) {
   const [showNewsletter, setShowNewsletter] = useState(false);
   const [isDesktop, setIsDesktop] = useState(window.innerWidth > 768);
   const [viewMode, setViewMode] = useState(isDesktop ? 'grid' : 'list');
+  const [selectedItem, setSelectedItem] = useState(null);
+  const [isItemDetailsVisible, setIsItemDetailsVisible] = useState(false);
 
   const filteredItems = menuItems.filter(item => 
     (selectedCategories.length === 0 || selectedCategories.includes(item.category)) &&
@@ -78,6 +81,16 @@ function Menu({ addToCart, cartItems, updateQuantity }) {
     'Ensaladas': <FaCarrot />,
     'Wraps': <FaUtensils />,
     'Postres': <FaIceCream />,
+  };
+
+  const handleItemClick = (item) => {
+    setSelectedItem(item);
+    setIsItemDetailsVisible(true);
+  };
+
+  const handleCloseItemDetails = () => {
+    setIsItemDetailsVisible(false);
+    setTimeout(() => setSelectedItem(null), 300); // Delay to allow exit animation
   };
 
   return (
@@ -150,6 +163,7 @@ function Menu({ addToCart, cartItems, updateQuantity }) {
               items={featuredItems} 
               itemsToShow={isDesktop ? 4 : 2}
               itemsToScroll={isDesktop ? 4 : 2}
+              onItemClick={handleItemClick}
             />
           </div>
         </div>
@@ -165,11 +179,12 @@ function Menu({ addToCart, cartItems, updateQuantity }) {
               key={item.id}
               className={`bg-white rounded-lg shadow-md overflow-hidden ${
                 viewMode === 'list' ? 'flex h-40' : 'h-auto'
-              } hover:shadow-xl transition-shadow duration-300`}
+              } hover:shadow-xl transition-shadow duration-300 cursor-pointer`}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
               transition={{ duration: 0.3 }}
+              onClick={() => handleItemClick(item)}
             >
               <div className={`${
                 viewMode === 'grid' ? 'h-48' : 'w-1/3 h-full'
@@ -213,6 +228,14 @@ function Menu({ addToCart, cartItems, updateQuantity }) {
           ))}
         </div>
       </div>
+
+      {/* Item Details */}
+      <ItemDetails
+        item={selectedItem}
+        onClose={handleCloseItemDetails}
+        addToCart={addToCart}
+        isVisible={isItemDetailsVisible}
+      />
 
       {showNewsletter && (
         <div
