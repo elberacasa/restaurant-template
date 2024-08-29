@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { FaFilter, FaChevronRight, FaChevronLeft, FaGem, FaPlus, FaMinus } from 'react-icons/fa';
+import { motion, AnimatePresence } from 'framer-motion';
 import Carousel from './Carousel';
 
 const menuItems = [
@@ -114,6 +115,12 @@ function Menu({ addToCart, cartItems, updateQuantity }) {
             </div>
           </div>
         </div>
+        <button
+          onClick={() => setIsSidebarOpen(false)}
+          className="mt-4 bg-blue-500 text-white p-2 rounded hover:bg-blue-600 transition duration-300"
+        >
+          Aplicar Filtros
+        </button>
       </div>
       
       {/* Mobile filter button */}
@@ -139,15 +146,20 @@ function Menu({ addToCart, cartItems, updateQuantity }) {
         </div>
 
         <div className="mb-8">
-          <h3 className="text-xl font-semibold mb-4">Destacados</h3>
+          <h3 className="text-xl font-semibold mb-4">Ofertas Especiales</h3>
           <Carousel items={featuredItems} />
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
           {filteredItems.map((item) => (
-            <div
+            <motion.div
               key={item.id}
               className="bg-white rounded-lg shadow-md overflow-hidden"
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.9 }}
+              transition={{ duration: 0.3 }}
+              whileHover={{ scale: 1.05 }}
             >
               <img 
                 src={item.image} 
@@ -176,7 +188,7 @@ function Menu({ addToCart, cartItems, updateQuantity }) {
                   </div>
                 </div>
               </div>
-            </div>
+            </motion.div>
           ))}
         </div>
       </div>
