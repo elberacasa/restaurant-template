@@ -1,5 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import { FaWhatsapp } from 'react-icons/fa';
 
 function Contacto() {
   return (
@@ -8,9 +9,30 @@ function Contacto() {
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.5 }}
-      className="container mx-auto p-4"
+      className="container mx-auto p-4 relative"
     >
       <h2 className="text-3xl font-bold text-gray-800 mb-6">Contáctanos</h2>
+      
+      {/* WhatsApp Button */}
+      <motion.a
+        href="https://wa.me/582129524111"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="absolute top-4 right-4 bg-green-500 text-white p-3 rounded-full shadow-lg flex items-center justify-center"
+        whileHover={{ scale: 1.1 }}
+        whileTap={{ scale: 0.9 }}
+        initial={{ opacity: 0, y: -50 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{
+          type: "spring",
+          stiffness: 260,
+          damping: 20
+        }}
+      >
+        <FaWhatsapp size={24} />
+        <span className="ml-2 hidden md:inline text-sm">Chatea con nosotros</span>
+      </motion.a>
+
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="bg-white rounded-lg shadow-md p-6">
           <h3 className="text-xl font-semibold mb-4">Información de Contacto</h3>

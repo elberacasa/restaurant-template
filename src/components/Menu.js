@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { FaFilter, FaChevronRight, FaChevronLeft, FaGem, FaPlus, FaMinus } from 'react-icons/fa';
+import React, { useState, useEffect } from 'react';
+import { FaFilter, FaChevronLeft, FaGem, FaPlus, FaMinus, FaThLarge, FaList, FaHamburger, FaGlassMartini, FaCarrot, FaIceCream, FaUtensils } from 'react-icons/fa';
 import { motion, AnimatePresence } from 'framer-motion';
 import Carousel from './Carousel';
 
@@ -32,6 +32,7 @@ function Menu({ addToCart, cartItems, updateQuantity }) {
   const [priceRange, setPriceRange] = useState([0, 20]);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [showNewsletter, setShowNewsletter] = useState(false);
+  const [viewMode, setViewMode] = useState('list');
 
   const filteredItems = menuItems.filter(item => 
     (selectedCategories.length === 0 || selectedCategories.includes(item.category)) &&
@@ -68,13 +69,26 @@ function Menu({ addToCart, cartItems, updateQuantity }) {
     return cartItem ? cartItem.quantity : 0;
   };
 
+  const categoryIcons = {
+    'Todos': <FaUtensils />,
+    'Hamburguesas': <FaHamburger />,
+    'Acompañantes': <FaCarrot />,
+    'Bebidas': <FaGlassMartini />,
+    'Ensaladas': <FaCarrot />,
+    'Wraps': <FaUtensils />,
+    'Postres': <FaIceCream />,
+  };
+
   return (
-    <div className="container mx-auto p-4 flex flex-col md:flex-row relative">
+    <div className="container mx-auto p-4 flex flex-col md:flex-row relative font-sans bg-gray-100">
       {/* Sidebar for filters */}
-      <div
-        className={`fixed md:static left-0 top-0 h-full bg-white shadow-lg z-20 w-64 p-4 md:w-1/4 md:shadow-none md:p-0 md:mr-4 ${
+      <motion.div
+        className={`fixed md:static left-0 top-0 h-full bg-white shadow-lg z-20 w-64 p-6 md:w-1/4 md:rounded-lg md:mr-8 ${
           isSidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'
         } transition-transform duration-300 ease-in-out`}
+        initial={{ x: -300 }}
+        animate={{ x: isSidebarOpen ? 0 : -300 }}
+        transition={{ duration: 0.3 }}
       >
         <button
           onClick={() => setIsSidebarOpen(false)}
@@ -82,24 +96,29 @@ function Menu({ addToCart, cartItems, updateQuantity }) {
         >
           <FaChevronLeft size={24} />
         </button>
-        <h3 className="text-xl font-bold mb-4">Filtros</h3>
-        <div className="space-y-4">
+        <h3 className="text-2xl font-bold mb-6 text-gray-800 flex items-center">
+          <FaFilter className="mr-2" /> Filtros
+        </h3>
+        <div className="space-y-6">
           <div>
-            <h4 className="font-semibold mb-2">Categoría</h4>
+            <h4 className="font-semibold mb-3 text-lg text-gray-700">Categoría</h4>
             {categories.map(cat => (
-              <label key={cat} className="flex items-center mb-2">
+              <label key={cat} className="flex items-center mb-2 cursor-pointer">
                 <input 
                   type="checkbox" 
                   checked={cat === 'Todos' ? selectedCategories.length === categories.length - 1 : selectedCategories.includes(cat)}
                   onChange={() => handleCategoryChange(cat)}
-                  className="form-checkbox h-5 w-5 text-blue-600 mr-2"
+                  className="form-checkbox h-5 w-5 text-blue-600 mr-3"
                 />
-                {cat}
+                <span className="text-gray-700 hover:text-blue-600 transition-colors duration-200 flex items-center">
+                  {categoryIcons[cat] && <span className="mr-2">{categoryIcons[cat]}</span>}
+                  {cat}
+                </span>
               </label>
             ))}
           </div>
           <div>
-            <h4 className="font-semibold mb-2">Rango de precios</h4>
+            <h4 className="font-semibold mb-3 text-lg text-gray-700">Rango de precios</h4>
             <input 
               type="range" 
               min="0" 
@@ -109,7 +128,7 @@ function Menu({ addToCart, cartItems, updateQuantity }) {
               onChange={(e) => setPriceRange([priceRange[0], parseFloat(e.target.value)])}
               className="w-full"
             />
-            <div className="flex justify-between">
+            <div className="flex justify-between mt-2 text-gray-600">
               <span>${priceRange[0]}</span>
               <span>${priceRange[1]}</span>
             </div>
@@ -117,17 +136,17 @@ function Menu({ addToCart, cartItems, updateQuantity }) {
         </div>
         <button
           onClick={() => setIsSidebarOpen(false)}
-          className="mt-4 bg-blue-500 text-white p-2 rounded hover:bg-blue-600 transition duration-300"
+          className="mt-6 bg-blue-600 text-white py-2 px-4 rounded-full hover:bg-blue-700 transition duration-300 w-full flex items-center justify-center"
         >
-          Aplicar Filtros
+          <FaFilter className="mr-2" /> Aplicar Filtros
         </button>
-      </div>
+      </motion.div>
       
       {/* Mobile filter button */}
       <div className="fixed left-0 top-1/2 transform -translate-y-1/2 bg-white shadow-lg rounded-r-lg z-10 md:hidden">
         <button
           onClick={() => setIsSidebarOpen(true)}
-          className="p-2 text-gray-500 hover:text-gray-700"
+          className="p-3 text-gray-500 hover:text-gray-700"
         >
           <FaFilter size={24} />
         </button>
@@ -135,50 +154,74 @@ function Menu({ addToCart, cartItems, updateQuantity }) {
 
       {/* Main content */}
       <div className="w-full md:w-3/4">
-        <div className="flex flex-col sm:flex-row justify-between items-center mb-6">
-          <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-4 sm:mb-0">Nuestro Menú</h2>
-          <button
-            onClick={() => setShowNewsletter(true)}
-            className="bg-yellow-400 text-blue-600 p-2 rounded-full hover:bg-yellow-300 transition duration-300 ease-in-out"
-          >
-            <FaGem size={24} />
-          </button>
+        <div className="flex flex-col sm:flex-row justify-between items-center mb-8 bg-white p-4 rounded-lg shadow-md">
+          <h2 className="text-3xl sm:text-4xl font-bold text-gray-800 mb-4 sm:mb-0">Nuestro Menú</h2>
+          <div className="flex items-center space-x-4">
+            <button
+              onClick={() => setViewMode(viewMode === 'grid' ? 'list' : 'grid')}
+              className="bg-blue-600 text-white p-2 rounded-full hover:bg-blue-700 transition duration-300 ease-in-out"
+            >
+              {viewMode === 'grid' ? <FaList size={20} /> : <FaThLarge size={20} />}
+            </button>
+            <button
+              onClick={() => setShowNewsletter(true)}
+              className="bg-yellow-400 text-blue-600 p-2 rounded-full hover:bg-yellow-300 transition duration-300 ease-in-out"
+            >
+              <FaGem size={20} />
+            </button>
+          </div>
         </div>
 
-        <div className="mb-8">
-          <h3 className="text-xl font-semibold mb-4">Ofertas Especiales</h3>
+        <div className="mb-12 bg-white p-4 rounded-lg shadow-md">
+          <h3 className="text-2xl font-semibold mb-6 text-center text-gray-800">Ofertas Especiales</h3>
           <Carousel items={featuredItems} />
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+        <div className={`grid gap-8 ${
+          viewMode === 'grid' 
+            ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4' 
+            : 'grid-cols-1'
+        }`}>
           {filteredItems.map((item) => (
             <motion.div
               key={item.id}
-              className="bg-white rounded-lg shadow-md overflow-hidden"
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.9 }}
+              className={`bg-white rounded-lg shadow-md overflow-hidden ${
+                viewMode === 'list' ? 'flex h-40' : 'h-auto'
+              } hover:shadow-xl transition-shadow duration-300`}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
               transition={{ duration: 0.3 }}
-              whileHover={{ scale: 1.05 }}
             >
-              <img 
-                src={item.image} 
-                alt={item.name} 
-                className="w-full h-40 object-cover"
-              />
-              <div className="p-4">
-                <h3 className="text-lg font-semibold mb-2">{item.name}</h3>
-                <p className="text-gray-600 mb-2">{item.category}</p>
-                <div className="flex justify-between items-center">
-                  <span className="text-lg font-bold text-blue-600">${item.price.toFixed(2)}</span>
-                  <div className="flex items-center">
+              <div className={`${
+                viewMode === 'grid' ? 'h-48' : 'w-1/3 h-full'
+              } overflow-hidden`}>
+                <img 
+                  src={item.image} 
+                  alt={item.name} 
+                  className="w-full h-full object-cover transform hover:scale-110 transition-transform duration-300"
+                />
+              </div>
+              <div className={`p-4 ${viewMode === 'list' ? 'flex-grow' : ''} flex flex-col justify-between`}>
+                <div>
+                  <h3 className="text-xl font-semibold mb-2 text-gray-800">{item.name}</h3>
+                  <p className="text-gray-600 text-sm mb-2 flex items-center">
+                    {categoryIcons[item.category] && <span className="mr-2">{categoryIcons[item.category]}</span>}
+                    {item.category}
+                  </p>
+                </div>
+                <div className={`${
+                  viewMode === 'list' ? 'flex justify-between items-center' : ''
+                }`}>
+                  <span className="text-2xl font-bold text-blue-600">${item.price.toFixed(2)}</span>
+                  <div className="flex items-center mt-3">
                     <button 
                       onClick={() => updateQuantity(item.id, Math.max(0, getItemQuantity(item.id) - 1))}
                       className="bg-red-500 text-white w-8 h-8 rounded-full flex items-center justify-center mr-2 transition duration-300 hover:bg-red-600"
                     >
                       <FaMinus />
                     </button>
-                    <span className="mx-2 font-semibold">{getItemQuantity(item.id)}</span>
+                    <span className="mx-2 font-semibold text-lg">{getItemQuantity(item.id)}</span>
                     <button 
                       onClick={() => addToCart(item)}
                       className="bg-green-500 text-white w-8 h-8 rounded-full flex items-center justify-center ml-2 transition duration-300 hover:bg-green-600"
@@ -198,18 +241,22 @@ function Menu({ addToCart, cartItems, updateQuantity }) {
           className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
           onClick={() => setShowNewsletter(false)}
         >
-          <div
-            className="bg-white p-6 rounded-lg max-w-md w-full m-4"
+          <motion.div
+            className="bg-white p-8 rounded-lg max-w-md w-full m-4"
             onClick={(e) => e.stopPropagation()}
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.9 }}
+            transition={{ duration: 0.3 }}
           >
-            <h3 className="text-2xl font-bold mb-4">¡Ofertas Especiales!</h3>
-            <p className="mb-4">Regístrate para recibir un 22% de descuento en tu próxima compra y más ofertas exclusivas.</p>
+            <h3 className="text-3xl font-bold mb-4 text-center text-gray-800">¡Ofertas Especiales!</h3>
+            <p className="mb-6 text-center text-gray-600">Regístrate para recibir un 22% de descuento en tu próxima compra y más ofertas exclusivas.</p>
             <form className="space-y-4">
-              <input type="email" placeholder="Tu correo electrónico" className="w-full p-2 border rounded" />
-              <button type="submit" className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600 transition duration-300">Registrarse</button>
+              <input type="email" placeholder="Tu correo electrónico" className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
+              <button type="submit" className="w-full bg-blue-600 text-white p-3 rounded-lg hover:bg-blue-700 transition duration-300">Registrarse</button>
             </form>
-            <button onClick={() => setShowNewsletter(false)} className="mt-4 text-sm text-gray-500 hover:text-gray-700">Cerrar</button>
-          </div>
+            <button onClick={() => setShowNewsletter(false)} className="mt-4 text-sm text-gray-500 hover:text-gray-700 w-full text-center">Cerrar</button>
+          </motion.div>
         </div>
       )}
     </div>
