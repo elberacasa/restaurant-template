@@ -48,6 +48,7 @@ function App() {
 
   return (
     <Router>
+      <ScrollToTop />
       <AppContent 
         cartItems={cartItems}
         addToCart={addToCart}
@@ -56,6 +57,17 @@ function App() {
       />
     </Router>
   );
+}
+
+// New component to handle scrolling to top
+function ScrollToTop() {
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+
+  return null;
 }
 
 function AppContent({ cartItems, addToCart, removeFromCart, updateQuantity }) {

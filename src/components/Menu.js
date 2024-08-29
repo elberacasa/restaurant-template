@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { FaFilter, FaChevronLeft, FaGem, FaPlus, FaMinus, FaThLarge, FaList, FaHamburger, FaGlassMartini, FaCarrot, FaIceCream, FaUtensils } from 'react-icons/fa';
 import { motion, AnimatePresence } from 'framer-motion';
 import Carousel from './Carousel';
+import DesktopSidebar from './DesktopSidebar';
 
 const menuItems = [
   { id: 1, name: 'Hamburguesa Clásica', price: 8.99, category: 'Hamburguesas', image: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80' },
@@ -32,7 +33,8 @@ function Menu({ addToCart, cartItems, updateQuantity }) {
   const [priceRange, setPriceRange] = useState([0, 20]);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [showNewsletter, setShowNewsletter] = useState(false);
-  const [viewMode, setViewMode] = useState('list');
+  const [isDesktop, setIsDesktop] = useState(window.innerWidth > 768);
+  const [viewMode, setViewMode] = useState(isDesktop ? 'grid' : 'list');
 
   const filteredItems = menuItems.filter(item => 
     (selectedCategories.length === 0 || selectedCategories.includes(item.category)) &&
@@ -53,14 +55,14 @@ function Menu({ addToCart, cartItems, updateQuantity }) {
 
   useEffect(() => {
     const handleResize = () => {
-      if (window.innerWidth > 768 && isSidebarOpen) {
-        setIsSidebarOpen(false);
-      }
+      const newIsDesktop = window.innerWidth > 768;
+      setIsDesktop(newIsDesktop);
+      setViewMode(newIsDesktop ? 'grid' : 'list');
     };
 
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
-  }, [isSidebarOpen]);
+  }, []);
 
   const featuredItems = menuItems.slice(0, 8); // Select first 8 items for the carousel
 
@@ -81,79 +83,91 @@ function Menu({ addToCart, cartItems, updateQuantity }) {
 
   return (
     <div className="container mx-auto p-4 flex flex-col md:flex-row relative font-sans bg-gray-100">
-      {/* Sidebar for filters */}
-      <motion.div
-        className={`fixed md:static left-0 top-0 h-full bg-white shadow-lg z-20 w-64 p-6 md:w-1/4 md:rounded-lg md:mr-8 ${
-          isSidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'
-        } transition-transform duration-300 ease-in-out`}
-        initial={{ x: -300 }}
-        animate={{ x: isSidebarOpen ? 0 : -300 }}
-        transition={{ duration: 0.3 }}
-      >
-        <button
-          onClick={() => setIsSidebarOpen(false)}
-          className="absolute right-4 top-4 text-gray-500 hover:text-gray-700 md:hidden"
+      {isDesktop ? (
+        <DesktopSidebar
+          categories={categories}
+          selectedCategories={selectedCategories}
+          handleCategoryChange={handleCategoryChange}
+          priceRange={priceRange}
+          setPriceRange={setPriceRange}
+          categoryIcons={categoryIcons}
+        />
+      ) : (
+        <motion.div
+          className={`fixed left-0 top-0 h-screen bg-white shadow-lg z-20 w-64 p-6 ${
+            isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
+          } transition-transform duration-300 ease-in-out overflow-y-auto`}
+          initial={false}
+          animate={{ x: isSidebarOpen ? 0 : '-100%' }}
+          transition={{ duration: 0.3 }}
         >
-          <FaChevronLeft size={24} />
-        </button>
-        <h3 className="text-2xl font-bold mb-6 text-gray-800 flex items-center">
-          <FaFilter className="mr-2" /> Filtros
-        </h3>
-        <div className="space-y-6">
-          <div>
-            <h4 className="font-semibold mb-3 text-lg text-gray-700">Categoría</h4>
-            {categories.map(cat => (
-              <label key={cat} className="flex items-center mb-2 cursor-pointer">
-                <input 
-                  type="checkbox" 
-                  checked={cat === 'Todos' ? selectedCategories.length === categories.length - 1 : selectedCategories.includes(cat)}
-                  onChange={() => handleCategoryChange(cat)}
-                  className="form-checkbox h-5 w-5 text-blue-600 mr-3"
-                />
-                <span className="text-gray-700 hover:text-blue-600 transition-colors duration-200 flex items-center">
-                  {categoryIcons[cat] && <span className="mr-2">{categoryIcons[cat]}</span>}
-                  {cat}
-                </span>
-              </label>
-            ))}
-          </div>
-          <div>
-            <h4 className="font-semibold mb-3 text-lg text-gray-700">Rango de precios</h4>
-            <input 
-              type="range" 
-              min="0" 
-              max="20" 
-              step="0.5"
-              value={priceRange[1]} 
-              onChange={(e) => setPriceRange([priceRange[0], parseFloat(e.target.value)])}
-              className="w-full"
-            />
-            <div className="flex justify-between mt-2 text-gray-600">
-              <span>${priceRange[0]}</span>
-              <span>${priceRange[1]}</span>
+          <button
+            onClick={() => setIsSidebarOpen(false)}
+            className="absolute right-4 top-4 text-gray-500 hover:text-gray-700 md:hidden"
+          >
+            <FaChevronLeft size={24} />
+          </button>
+          <h3 className="text-2xl font-bold mb-6 text-gray-800 flex items-center">
+            <FaFilter className="mr-2" /> Filtros
+          </h3>
+          <div className="space-y-6">
+            <div>
+              <h4 className="font-semibold mb-3 text-lg text-gray-700">Categoría</h4>
+              {categories.map(cat => (
+                <label key={cat} className="flex items-center mb-2 cursor-pointer">
+                  <input 
+                    type="checkbox" 
+                    checked={cat === 'Todos' ? selectedCategories.length === categories.length - 1 : selectedCategories.includes(cat)}
+                    onChange={() => handleCategoryChange(cat)}
+                    className="form-checkbox h-5 w-5 text-blue-600 mr-3"
+                  />
+                  <span className="text-gray-700 hover:text-blue-600 transition-colors duration-200 flex items-center">
+                    {categoryIcons[cat] && <span className="mr-2">{categoryIcons[cat]}</span>}
+                    {cat}
+                  </span>
+                </label>
+              ))}
+            </div>
+            <div>
+              <h4 className="font-semibold mb-3 text-lg text-gray-700">Rango de precios</h4>
+              <input 
+                type="range" 
+                min="0" 
+                max="20" 
+                step="0.5"
+                value={priceRange[1]} 
+                onChange={(e) => setPriceRange([priceRange[0], parseFloat(e.target.value)])}
+                className="w-full"
+              />
+              <div className="flex justify-between mt-2 text-gray-600">
+                <span>${priceRange[0]}</span>
+                <span>${priceRange[1]}</span>
+              </div>
             </div>
           </div>
-        </div>
-        <button
-          onClick={() => setIsSidebarOpen(false)}
-          className="mt-6 bg-blue-600 text-white py-2 px-4 rounded-full hover:bg-blue-700 transition duration-300 w-full flex items-center justify-center"
-        >
-          <FaFilter className="mr-2" /> Aplicar Filtros
-        </button>
-      </motion.div>
+          <button
+            onClick={() => setIsSidebarOpen(false)}
+            className="mt-6 bg-blue-600 text-white py-2 px-4 rounded-full hover:bg-blue-700 transition duration-300 w-full flex items-center justify-center"
+          >
+            <FaFilter className="mr-2" /> Aplicar Filtros
+          </button>
+        </motion.div>
+      )}
       
       {/* Mobile filter button */}
-      <div className="fixed left-0 top-1/2 transform -translate-y-1/2 bg-white shadow-lg rounded-r-lg z-10 md:hidden">
-        <button
-          onClick={() => setIsSidebarOpen(true)}
-          className="p-3 text-gray-500 hover:text-gray-700"
-        >
-          <FaFilter size={24} />
-        </button>
-      </div>
+      {!isDesktop && (
+        <div className="fixed left-0 top-1/2 transform -translate-y-1/2 bg-white shadow-lg rounded-r-lg z-10">
+          <button
+            onClick={() => setIsSidebarOpen(true)}
+            className="p-3 text-gray-500 hover:text-gray-700"
+          >
+            <FaFilter size={24} />
+          </button>
+        </div>
+      )}
 
       {/* Main content */}
-      <div className="w-full md:w-3/4">
+      <div className={`w-full ${isDesktop ? 'md:w-3/4' : ''}`}>
         <div className="flex flex-col sm:flex-row justify-between items-center mb-8 bg-white p-4 rounded-lg shadow-md">
           <h2 className="text-3xl sm:text-4xl font-bold text-gray-800 mb-4 sm:mb-0">Nuestro Menú</h2>
           <div className="flex items-center space-x-4">
