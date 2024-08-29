@@ -3,6 +3,7 @@ import { FaFilter, FaChevronLeft, FaGem, FaPlus, FaMinus, FaThLarge, FaList, FaH
 import { motion, AnimatePresence } from 'framer-motion';
 import Carousel from './Carousel';
 import DesktopSidebar from './DesktopSidebar';
+import MobileSidebar from './MobileSidebar';
 
 const menuItems = [
   { id: 1, name: 'Hamburguesa Clásica', price: 8.99, category: 'Hamburguesas', image: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80' },
@@ -55,9 +56,7 @@ function Menu({ addToCart, cartItems, updateQuantity }) {
 
   useEffect(() => {
     const handleResize = () => {
-      const newIsDesktop = window.innerWidth > 768;
-      setIsDesktop(newIsDesktop);
-      setViewMode(newIsDesktop ? 'grid' : 'list');
+      setIsDesktop(window.innerWidth > 768);
     };
 
     window.addEventListener('resize', handleResize);
@@ -82,7 +81,13 @@ function Menu({ addToCart, cartItems, updateQuantity }) {
   };
 
   return (
-    <div className="container mx-auto p-4 flex flex-col md:flex-row relative font-sans bg-gray-100">
+    <div className="container mx-auto p-4 flex flex-col relative font-sans bg-gray-100">
+      {/* Working hours component */}
+      <div className="bg-blue-500 text-white py-2 px-4 rounded-lg shadow-md mb-4 text-center">
+        <p className="text-sm md:text-base">Abierto de 8:00 AM a 8:00 PM</p>
+      </div>
+
+      {/* Filters component */}
       {isDesktop ? (
         <DesktopSidebar
           categories={categories}
@@ -93,65 +98,16 @@ function Menu({ addToCart, cartItems, updateQuantity }) {
           categoryIcons={categoryIcons}
         />
       ) : (
-        <motion.div
-          className={`fixed left-0 top-0 h-screen bg-white shadow-lg z-20 w-64 p-6 ${
-            isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
-          } transition-transform duration-300 ease-in-out overflow-y-auto`}
-          initial={false}
-          animate={{ x: isSidebarOpen ? 0 : '-100%' }}
-          transition={{ duration: 0.3 }}
-        >
-          <button
-            onClick={() => setIsSidebarOpen(false)}
-            className="absolute right-4 top-4 text-gray-500 hover:text-gray-700 md:hidden"
-          >
-            <FaChevronLeft size={24} />
-          </button>
-          <h3 className="text-2xl font-bold mb-6 text-gray-800 flex items-center">
-            <FaFilter className="mr-2" /> Filtros
-          </h3>
-          <div className="space-y-6">
-            <div>
-              <h4 className="font-semibold mb-3 text-lg text-gray-700">Categoría</h4>
-              {categories.map(cat => (
-                <label key={cat} className="flex items-center mb-2 cursor-pointer">
-                  <input 
-                    type="checkbox" 
-                    checked={cat === 'Todos' ? selectedCategories.length === categories.length - 1 : selectedCategories.includes(cat)}
-                    onChange={() => handleCategoryChange(cat)}
-                    className="form-checkbox h-5 w-5 text-blue-600 mr-3"
-                  />
-                  <span className="text-gray-700 hover:text-blue-600 transition-colors duration-200 flex items-center">
-                    {categoryIcons[cat] && <span className="mr-2">{categoryIcons[cat]}</span>}
-                    {cat}
-                  </span>
-                </label>
-              ))}
-            </div>
-            <div>
-              <h4 className="font-semibold mb-3 text-lg text-gray-700">Rango de precios</h4>
-              <input 
-                type="range" 
-                min="0" 
-                max="20" 
-                step="0.5"
-                value={priceRange[1]} 
-                onChange={(e) => setPriceRange([priceRange[0], parseFloat(e.target.value)])}
-                className="w-full"
-              />
-              <div className="flex justify-between mt-2 text-gray-600">
-                <span>${priceRange[0]}</span>
-                <span>${priceRange[1]}</span>
-              </div>
-            </div>
-          </div>
-          <button
-            onClick={() => setIsSidebarOpen(false)}
-            className="mt-6 bg-blue-600 text-white py-2 px-4 rounded-full hover:bg-blue-700 transition duration-300 w-full flex items-center justify-center"
-          >
-            <FaFilter className="mr-2" /> Aplicar Filtros
-          </button>
-        </motion.div>
+        <MobileSidebar
+          categories={categories}
+          selectedCategories={selectedCategories}
+          handleCategoryChange={handleCategoryChange}
+          priceRange={priceRange}
+          setPriceRange={setPriceRange}
+          categoryIcons={categoryIcons}
+          isSidebarOpen={isSidebarOpen}
+          setIsSidebarOpen={setIsSidebarOpen}
+        />
       )}
       
       {/* Mobile filter button */}
@@ -166,36 +122,40 @@ function Menu({ addToCart, cartItems, updateQuantity }) {
         </div>
       )}
 
-      {/* Main content */}
-      <div className={`w-full ${isDesktop ? 'md:w-3/4' : ''}`}>
-        {/* New component for working hours */}
-        <div className="bg-blue-500 text-white py-2 px-4 rounded-lg shadow-md mb-4 text-center">
-          <p className="text-sm md:text-base">Abierto de 8:00 AM a 8:00 PM</p>
-        </div>
+      {/* Floating buttons for view mode and newsletter */}
+      <div className="fixed right-4 bottom-20 md:bottom-4 flex flex-col space-y-2 z-20">
+        <button
+          onClick={() => setViewMode(viewMode === 'grid' ? 'list' : 'grid')}
+          className="bg-blue-600 text-white p-2 md:p-3 rounded-full hover:bg-blue-700 transition duration-300 ease-in-out shadow-lg"
+        >
+          {viewMode === 'grid' ? <FaList size={isDesktop ? 20 : 16} /> : <FaThLarge size={isDesktop ? 20 : 16} />}
+        </button>
+        <button
+          onClick={() => setShowNewsletter(true)}
+          className="bg-yellow-400 text-blue-600 p-2 md:p-3 rounded-full hover:bg-yellow-300 transition duration-300 ease-in-out shadow-lg"
+        >
+          <FaGem size={isDesktop ? 20 : 16} />
+        </button>
+      </div>
 
-        <div className="flex justify-end items-center mb-8 bg-white p-4 rounded-lg shadow-md">
-          <div className="flex items-center space-x-4">
-            <button
-              onClick={() => setViewMode(viewMode === 'grid' ? 'list' : 'grid')}
-              className="bg-blue-600 text-white p-2 rounded-full hover:bg-blue-700 transition duration-300 ease-in-out"
-            >
-              {viewMode === 'grid' ? <FaList size={20} /> : <FaThLarge size={20} />}
-            </button>
-            <button
-              onClick={() => setShowNewsletter(true)}
-              className="bg-yellow-400 text-blue-600 p-2 rounded-full hover:bg-yellow-300 transition duration-300 ease-in-out"
-            >
-              <FaGem size={20} />
-            </button>
+      {/* Main content */}
+      <div className="w-full">
+        {/* Modified Ofertas Especiales section */}
+        <div className="mb-8 bg-white rounded-lg shadow-md overflow-hidden">
+          <div className="bg-yellow-400 text-blue-800 py-2 px-4">
+            <h3 className="text-lg font-semibold">Ofertas Especiales del Día</h3>
+          </div>
+          <div className="p-4">
+            <Carousel 
+              items={featuredItems} 
+              itemsToShow={isDesktop ? 4 : 2}
+              itemsToScroll={isDesktop ? 4 : 2}
+            />
           </div>
         </div>
 
-        <div className="mb-12 bg-white p-4 rounded-lg shadow-md">
-          <h3 className="text-2xl font-semibold mb-6 text-center text-gray-800">Ofertas Especiales</h3>
-          <Carousel items={featuredItems} />
-        </div>
-
-        <div className={`grid gap-8 ${
+        {/* Menu items grid */}
+        <div className={`grid gap-6 ${
           viewMode === 'grid' 
             ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4' 
             : 'grid-cols-1'
