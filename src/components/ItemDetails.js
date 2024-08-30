@@ -85,24 +85,24 @@ function ItemDetails({ item, onClose, addToCart, updateQuantity, getItemQuantity
             className="bg-white w-full max-w-md md:max-w-lg lg:max-w-xl rounded-lg shadow-xl overflow-hidden"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="relative flex flex-col h-full max-h-[90vh]">
+            <div className="relative flex flex-col h-full max-h-[calc(100vh-6rem)] md:max-h-[90vh]">
               <button
                 onClick={onClose}
                 className="absolute top-4 left-4 text-white hover:text-gray-200 transition-colors duration-200 z-10"
               >
                 <FaChevronLeft size={24} />
               </button>
-              <img src={item.image} alt={item.name} className="w-full h-48 object-cover" />
-              <div className="p-6 flex-grow overflow-y-auto">
-                <h2 className="text-2xl font-bold mb-2">{item.name}</h2>
-                <p className="text-gray-600 mb-4">{item.category}</p>
-                <p className="text-xl font-semibold mb-4">${getItemPrice()}</p>
-                <p className="text-gray-700 mb-6">
+              <img src={item.image} alt={item.name} className="w-full h-40 md:h-48 object-cover" />
+              <div className="p-4 md:p-6 flex-grow overflow-y-auto">
+                <h2 className="text-xl md:text-2xl font-bold mb-2">{item.name}</h2>
+                <p className="text-gray-600 mb-2 md:mb-4">{item.category}</p>
+                <p className="text-lg md:text-xl font-semibold mb-2 md:mb-4">${getItemPrice()}</p>
+                <p className="text-sm md:text-base text-gray-700 mb-4 md:mb-6">
                   {item.description || "Deliciosa hamburguesa con carne de res, lechuga, tomate y nuestra salsa especial."}
                 </p>
                 
-                <div className="mb-4">
-                  <label className="flex items-center">
+                <div className="mb-3 md:mb-4">
+                  <label className="flex items-center text-sm md:text-base">
                     <input
                       type="checkbox"
                       checked={isCombo}
@@ -113,8 +113,8 @@ function ItemDetails({ item, onClose, addToCart, updateQuantity, getItemQuantity
                   </label>
                 </div>
 
-                <h3 className="font-semibold mb-2">Extras (+$0.50 cada uno):</h3>
-                <div className="grid grid-cols-2 gap-2">
+                <h3 className="font-semibold mb-2 text-sm md:text-base">Extras (+$0.50 cada uno):</h3>
+                <div className="grid grid-cols-2 gap-2 text-sm md:text-base">
                   {Object.entries(extras).map(([extra, isAdded]) => (
                     <label key={extra} className="flex items-center">
                       <input
@@ -148,7 +148,7 @@ function ItemDetails({ item, onClose, addToCart, updateQuantity, getItemQuantity
                 </div>
                 <button 
                   onClick={handleAddToCart}
-                  className="bg-blue-600 text-white px-4 py-2 rounded-full hover:bg-blue-700 transition duration-300"
+                  className="bg-blue-600 text-white px-4 py-2 rounded-full hover:bg-blue-700 transition duration-300 text-sm md:text-base"
                 >
                   Agregar al carrito
                 </button>
