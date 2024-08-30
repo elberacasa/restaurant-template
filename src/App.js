@@ -1,15 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense, lazy } from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { AnimatePresence } from 'framer-motion';
 import Header from './components/Header';
 import Navigation from './components/Navigation';
-import Menu from './components/Menu';
-import Ubicaciones from './components/Ubicaciones';
-import Contacto from './components/Contacto';
-import Ofertas from './components/Ofertas';
 import Cart from './components/Cart';
 import LoadingScreen from './components/LoadingScreen';
 import { ThemeProvider } from './components/ThemeProvider';
+import ErrorBoundary from './components/ErrorBoundary';
+
+const Menu = lazy(() => import('./components/Menu'));
+const Contacto = lazy(() => import('./components/Contacto'));
 
 function App() {
   const [cartItems, setCartItems] = useState([]);
@@ -74,29 +74,31 @@ function App() {
 
   return (
     <ThemeProvider>
-      <Router>
-        <div className="App flex flex-col min-h-screen">
-          <AnimatePresence>
-            {isLoading ? (
-              <LoadingScreen key="loading" />
-            ) : (
-              <>
-                <Header cartItemCount={cartItemCount} />
-                <main className="flex-grow">
-                  <Routes>
-                    <Route path="/" element={<Menu addToCart={addToCart} cartItems={cartItems} updateQuantity={updateQuantity} getItemQuantity={getItemQuantity} />} />
-                    <Route path="/ubicaciones" element={<Ubicaciones />} />
-                    <Route path="/contacto" element={<Contacto />} />
-                    <Route path="/ofertas" element={<Ofertas addToCart={addToCart} cartItems={cartItems} updateQuantity={updateQuantity} getItemQuantity={getItemQuantity} />} />
-                    <Route path="/cart" element={<Cart cartItems={cartItems} removeFromCart={removeFromCart} updateQuantity={updateQuantity} />} />
-                  </Routes>
-                </main>
-                <Navigation cartItemCount={cartItemCount} />
-              </>
-            )}
-          </AnimatePresence>
-        </div>
-      </Router>
+      <ErrorBoundary>
+        <Router>
+          <div className="App flex flex-col min-h-screen">
+            <AnimatePresence>
+              {isLoading ? (
+                <LoadingScreen key="loading" />
+              ) : (
+                <>
+                  <Header cartItemCount={cartItemCount} />
+                  <main className="flex-grow">
+                    <Suspense fallback={<LoadingScreen />}>
+                      <Routes>
+                        <Route path="/" element={<Menu addToCart={addToCart} cartItems={cartItems} updateQuantity={updateQuantity} getItemQuantity={getItemQuantity} />} />
+                        <Route path="/contacto" element={<Contacto />} />
+                        <Route path="/cart" element={<Cart cartItems={cartItems} removeFromCart={removeFromCart} updateQuantity={updateQuantity} />} />
+                      </Routes>
+                    </Suspense>
+                  </main>
+                  <Navigation cartItemCount={cartItemCount} />
+                </>
+              )}
+            </AnimatePresence>
+          </div>
+        </Router>
+      </ErrorBoundary>
     </ThemeProvider>
   );
 }

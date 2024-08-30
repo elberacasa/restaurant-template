@@ -2,8 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaChevronLeft, FaPlus, FaMinus } from 'react-icons/fa';
 
-function ItemDetails({ item, onClose, addToCart, updateQuantity, getItemQuantity, isVisible }) {
-  const swipeThreshold = 50;
+function ItemDetails({ item, onClose, updateQuantity, getItemQuantity, isVisible }) {
   const [isCombo, setIsCombo] = useState(false);
   const [extras, setExtras] = useState({
     cheese: false,
@@ -17,7 +16,6 @@ function ItemDetails({ item, onClose, addToCart, updateQuantity, getItemQuantity
   });
 
   useEffect(() => {
-    // Reset filters when a new item is selected
     setIsCombo(false);
     setExtras({
       cheese: false,
@@ -37,33 +35,11 @@ function ItemDetails({ item, onClose, addToCart, updateQuantity, getItemQuantity
 
   const getItemPrice = () => {
     let price = item.price;
-    if (isCombo) price += 3.99; // Assuming combo adds $3.99
+    if (isCombo) price += 3.99;
     Object.entries(extras).forEach(([extra, isAdded]) => {
-      if (isAdded) price += 0.50; // Assuming each extra costs $0.50
+      if (isAdded) price += 0.50;
     });
     return price.toFixed(2);
-  };
-
-  const handleAddToCart = () => {
-    const itemWithOptions = {
-      ...item,
-      isCombo,
-      extras,
-      price: parseFloat(getItemPrice()),
-    };
-    addToCart(itemWithOptions);
-    // Reset filters after adding to cart
-    setIsCombo(false);
-    setExtras({
-      cheese: false,
-      onion: false,
-      ketchup: false,
-      mayo: false,
-      mustard: false,
-      lettuce: false,
-      tomato: false,
-      pickle: false,
-    });
   };
 
   return (
@@ -101,56 +77,54 @@ function ItemDetails({ item, onClose, addToCart, updateQuantity, getItemQuantity
                   {item.description || "Deliciosa hamburguesa con carne de res, lechuga, tomate y nuestra salsa especial."}
                 </p>
                 
-                <div className="mb-3 md:mb-4">
-                  <label className="flex items-center text-sm md:text-base">
-                    <input
-                      type="checkbox"
-                      checked={isCombo}
-                      onChange={() => setIsCombo(!isCombo)}
-                      className="mr-2"
-                    />
-                    Hacer combo (papas fritas y refresco) +$3.99
-                  </label>
-                </div>
-
-                <h3 className="font-semibold mb-2 text-sm md:text-base">Extras (+$0.50 cada uno):</h3>
-                <div className="grid grid-cols-2 gap-2 text-sm md:text-base">
-                  {Object.entries(extras).map(([extra, isAdded]) => (
-                    <label key={extra} className="flex items-center">
+                {!item.isCombo && (
+                  <div className="mb-3 md:mb-4">
+                    <label className="flex items-center text-sm md:text-base">
                       <input
                         type="checkbox"
-                        checked={isAdded}
-                        onChange={() => handleExtraToggle(extra)}
+                        checked={isCombo}
+                        onChange={() => setIsCombo(!isCombo)}
                         className="mr-2"
                       />
-                      {extra.charAt(0).toUpperCase() + extra.slice(1)}
+                      Hacer combo (papas fritas y refresco) +$3.99
                     </label>
-                  ))}
-                </div>
+                  </div>
+                )}
+
+                {!item.isCombo && (
+                  <>
+                    <h3 className="font-semibold mb-2 text-sm md:text-base">Extras (+$0.50 cada uno):</h3>
+                    <div className="grid grid-cols-2 gap-2 text-sm md:text-base">
+                      {Object.entries(extras).map(([extra, isAdded]) => (
+                        <label key={extra} className="flex items-center">
+                          <input
+                            type="checkbox"
+                            checked={isAdded}
+                            onChange={() => handleExtraToggle(extra)}
+                            className="mr-2"
+                          />
+                          {extra.charAt(0).toUpperCase() + extra.slice(1)}
+                        </label>
+                      ))}
+                    </div>
+                  </>
+                )}
               </div>
               
-              {/* Add/remove buttons */}
-              <div className="p-4 bg-gray-100 flex items-center justify-between">
-                <div className="flex items-center">
-                  <button 
-                    onClick={() => updateQuantity(item.id, Math.max(0, getItemQuantity(item.id) - 1))}
-                    className="bg-red-500 text-white w-8 h-8 rounded-full flex items-center justify-center transition duration-300 hover:bg-red-600"
-                  >
-                    <FaMinus />
-                  </button>
-                  <span className="mx-3 font-semibold text-xl">{getItemQuantity(item.id)}</span>
-                  <button 
-                    onClick={handleAddToCart}
-                    className="bg-green-500 text-white w-8 h-8 rounded-full flex items-center justify-center transition duration-300 hover:bg-green-600"
-                  >
-                    <FaPlus />
-                  </button>
-                </div>
+              {/* Centered add/remove buttons */}
+              <div className="p-4 bg-gray-100 flex justify-center items-center">
                 <button 
-                  onClick={handleAddToCart}
-                  className="bg-blue-600 text-white px-4 py-2 rounded-full hover:bg-blue-700 transition duration-300 text-sm md:text-base"
+                  onClick={() => updateQuantity(item.id, Math.max(0, getItemQuantity(item.id) - 1), item.isCombo, extras)}
+                  className="bg-red-500 text-white w-10 h-10 rounded-full flex items-center justify-center transition duration-300 hover:bg-red-600"
                 >
-                  Agregar al carrito
+                  <FaMinus />
+                </button>
+                <span className="mx-4 font-semibold text-xl">{getItemQuantity(item.id)}</span>
+                <button 
+                  onClick={() => updateQuantity(item.id, getItemQuantity(item.id) + 1, item.isCombo, extras)}
+                  className="bg-green-500 text-white w-10 h-10 rounded-full flex items-center justify-center transition duration-300 hover:bg-green-600"
+                >
+                  <FaPlus />
                 </button>
               </div>
             </div>

@@ -6,6 +6,10 @@ import 'keen-slider/keen-slider.min.css';
 function Carousel({ items, itemsToShow, itemsToScroll, onItemClick }) {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [loaded, setLoaded] = useState(false);
+
+  // Ensure we have at least 3 * itemsToShow items
+  const extendedItems = [...items, ...items, ...items];
+
   const [sliderRef, instanceRef] = useKeenSlider({
     initial: 0,
     slides: {
@@ -26,6 +30,11 @@ function Carousel({ items, itemsToShow, itemsToScroll, onItemClick }) {
     created() {
       setLoaded(true);
     },
+    updated(slider) {
+      slider.track.details.slides.forEach((slide) => {
+        slide.distance = (slide.distance % items.length) - items.length;
+      });
+    },
   });
 
   function autoplay(run) {
@@ -33,7 +42,7 @@ function Carousel({ items, itemsToShow, itemsToScroll, onItemClick }) {
     if (run && instanceRef.current) {
       instanceRef.current.autoplayTimeout = setTimeout(() => {
         instanceRef.current?.next();
-      }, 3000); // Change slide every 3 seconds
+      }, 1000); // Change slide every 3 seconds
     }
   }
 
@@ -46,8 +55,8 @@ function Carousel({ items, itemsToShow, itemsToScroll, onItemClick }) {
   return (
     <div className="relative">
       <div ref={sliderRef} className="keen-slider">
-        {items.map((item) => (
-          <div key={item.id} className="keen-slider__slide">
+        {extendedItems.map((item, index) => (
+          <div key={`${item.id}-${index}`} className="keen-slider__slide">
             <motion.div
               className="bg-white rounded-lg shadow-md overflow-hidden cursor-pointer relative"
               whileHover={{ scale: 1.05 }}
@@ -68,14 +77,14 @@ function Carousel({ items, itemsToShow, itemsToScroll, onItemClick }) {
       </div>
       {loaded && instanceRef.current && (
         <div className="flex justify-center mt-4">
-          {[...Array(instanceRef.current.track.details.slides.length).keys()].map((idx) => (
+          {[...Array(Math.min(5, items.length)).keys()].map((idx) => (
             <button
               key={idx}
               onClick={() => {
-                instanceRef.current?.moveToIdx(idx);
+                instanceRef.current?.moveToIdx(idx * itemsToShow);
               }}
               className={`h-2 w-2 rounded-full mx-1 ${
-                currentSlide === idx ? 'bg-blue-500' : 'bg-gray-300'
+                currentSlide % items.length === idx * itemsToShow % items.length ? 'bg-blue-500' : 'bg-gray-300'
               }`}
             ></button>
           ))}

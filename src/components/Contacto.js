@@ -1,8 +1,16 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { FaWhatsapp } from 'react-icons/fa';
+import { useForm } from 'react-hook-form';
 
 function Contacto() {
+  const { register, handleSubmit, formState: { errors } } = useForm();
+
+  const onSubmit = (data) => {
+    console.log(data);
+    // Handle form submission
+  };
+
   return (
     <motion.div 
       initial={{ opacity: 0 }}
@@ -42,10 +50,16 @@ function Contacto() {
         </div>
         <div className="bg-white rounded-lg shadow-md p-6">
           <h3 className="text-xl font-semibold mb-4">Formulario de Contacto</h3>
-          <form>
+          <form onSubmit={handleSubmit(onSubmit)}>
             <div className="mb-4">
               <label htmlFor="name" className="block text-gray-700 font-bold mb-2">Nombre</label>
-              <input type="text" id="name" className="w-full px-3 py-2 border rounded-lg" />
+              <input 
+                type="text" 
+                id="name" 
+                {...register("name", { required: "Name is required" })}
+                className={`w-full px-3 py-2 border rounded-lg ${errors.name ? 'border-red-500' : ''}`} 
+              />
+              {errors.name && <p className="text-red-500 text-xs italic">{errors.name.message}</p>}
             </div>
             <div className="mb-4">
               <label htmlFor="email" className="block text-gray-700 font-bold mb-2">Email</label>
