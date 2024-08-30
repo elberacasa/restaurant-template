@@ -26,18 +26,18 @@ function Navigation({ cartItemCount }) {
             <motion.div
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.95 }}
-              className="flex flex-col items-center"
+              className="flex flex-col items-center relative"
               initial={{ y: 10, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ duration: 0.3 }}
             >
-              <item.icon className={`text-2xl mb-1 ${item.name === 'Menú' ? 'text-3xl text-yellow-300' : ''}`} aria-hidden="true" />
-              <span className={`text-xs text-center ${item.name === 'Menú' ? 'font-bold' : ''}`}>{item.name}</span>
               {item.name === 'Carrito' && cartItemCount > 0 && (
-                <span className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-4 h-4 flex items-center justify-center text-xs" aria-label={`${cartItemCount} items en el carrito`}>
+                <span className="absolute -top-3 left-[80%] transform -translate-x-1/2 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs" aria-label={`${cartItemCount} items en el carrito`}>
                   {cartItemCount}
                 </span>
               )}
+              <item.icon className={`text-2xl mb-1 ${item.name === 'Menú' ? 'text-3xl text-yellow-300' : ''}`} aria-hidden="true" />
+              <span className={`text-xs text-center ${item.name === 'Menú' ? 'font-bold' : ''}`}>{item.name}</span>
             </motion.div>
           </Link>
         ))}
