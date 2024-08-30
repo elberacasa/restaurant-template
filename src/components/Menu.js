@@ -30,7 +30,7 @@ const menuItems = [
   { id: 20, name: 'Café Americano', price: 2.49, category: 'Bebidas', image: 'https://images.unsplash.com/photo-1521302080334-4bebac2763a6?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80' },
 ];
 
-function Menu({ addToCart, cartItems, updateQuantity }) {
+function Menu({ addToCart, cartItems, updateQuantity, getItemQuantity }) {
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [priceRange, setPriceRange] = useState([0, 20]);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -68,11 +68,6 @@ function Menu({ addToCart, cartItems, updateQuantity }) {
 
   const featuredItems = menuItems.slice(0, 8); // Select first 8 items for the carousel
 
-  const getItemQuantity = (itemId) => {
-    const cartItem = cartItems.find(item => item.id === itemId);
-    return cartItem ? cartItem.quantity : 0;
-  };
-
   const categoryIcons = {
     'Todos': <FaUtensils />,
     'Hamburguesas': <FaHamburger />,
@@ -91,6 +86,33 @@ function Menu({ addToCart, cartItems, updateQuantity }) {
   const handleCloseItemDetails = () => {
     setIsItemDetailsVisible(false);
     setTimeout(() => setSelectedItem(null), 300); // Delay to allow exit animation
+  };
+
+  const handleAddToCart = (item) => {
+    addToCart(item);
+  };
+
+  const getTotalItemQuantity = (itemId) => {
+    return cartItems.reduce((total, cartItem) => {
+      if (cartItem.id === itemId) {
+        return total + cartItem.quantity;
+      }
+      return total;
+    }, 0);
+  };
+
+  const handleUpdateQuantity = (itemId, newQuantity) => {
+    const itemInCart = cartItems.find(item => item.id === itemId);
+    if (itemInCart) {
+      // If the item is in the cart, update its quantity
+      updateQuantity(itemId, newQuantity, itemInCart.isCombo, itemInCart.extras);
+    } else {
+      // If the item is not in the cart, add it with default options
+      const item = menuItems.find(item => item.id === itemId);
+      if (item) {
+        addToCart({ ...item, isCombo: false, extras: {} });
+      }
+    }
   };
 
   return (
@@ -135,22 +157,6 @@ function Menu({ addToCart, cartItems, updateQuantity }) {
         </div>
       )}
 
-      {/* Floating buttons for view mode and newsletter */}
-      <div className="fixed right-4 bottom-20 md:bottom-4 flex flex-col space-y-2 z-20">
-        <button
-          onClick={() => setViewMode(viewMode === 'grid' ? 'list' : 'grid')}
-          className="bg-blue-600 text-white p-2 md:p-3 rounded-full hover:bg-blue-700 transition duration-300 ease-in-out shadow-lg"
-        >
-          {viewMode === 'grid' ? <FaList size={isDesktop ? 20 : 16} /> : <FaThLarge size={isDesktop ? 20 : 16} />}
-        </button>
-        <button
-          onClick={() => setShowNewsletter(true)}
-          className="bg-yellow-400 text-blue-600 p-2 md:p-3 rounded-full hover:bg-yellow-300 transition duration-300 ease-in-out shadow-lg"
-        >
-          <FaGem size={isDesktop ? 20 : 16} />
-        </button>
-      </div>
-
       {/* Main content */}
       <div className="w-full">
         {/* Modified Ofertas Especiales section */}
@@ -164,6 +170,7 @@ function Menu({ addToCart, cartItems, updateQuantity }) {
               itemsToShow={isDesktop ? 4 : 2}
               itemsToScroll={isDesktop ? 4 : 2}
               onItemClick={handleItemClick}
+              getTotalItemQuantity={getTotalItemQuantity}
             />
           </div>
         </div>
@@ -208,15 +215,25 @@ function Menu({ addToCart, cartItems, updateQuantity }) {
                 }`}>
                   <span className="text-2xl font-bold text-blue-600">${item.price.toFixed(2)}</span>
                   <div className="flex items-center mt-3">
+                    {getTotalItemQuantity(item.id) > 0 && (
+                      <button 
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleUpdateQuantity(item.id, Math.max(0, getTotalItemQuantity(item.id) - 1));
+                        }}
+                        className="bg-red-500 text-white w-8 h-8 rounded-full flex items-center justify-center mr-2 transition duration-300 hover:bg-red-600"
+                      >
+                        <FaMinus />
+                      </button>
+                    )}
+                    {getTotalItemQuantity(item.id) > 0 && (
+                      <span className="mx-2 font-semibold text-lg">{getTotalItemQuantity(item.id)}</span>
+                    )}
                     <button 
-                      onClick={() => updateQuantity(item.id, Math.max(0, getItemQuantity(item.id) - 1))}
-                      className="bg-red-500 text-white w-8 h-8 rounded-full flex items-center justify-center mr-2 transition duration-300 hover:bg-red-600"
-                    >
-                      <FaMinus />
-                    </button>
-                    <span className="mx-2 font-semibold text-lg">{getItemQuantity(item.id)}</span>
-                    <button 
-                      onClick={() => addToCart(item)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleUpdateQuantity(item.id, getTotalItemQuantity(item.id) + 1);
+                      }}
                       className="bg-green-500 text-white w-8 h-8 rounded-full flex items-center justify-center ml-2 transition duration-300 hover:bg-green-600"
                     >
                       <FaPlus />
@@ -233,7 +250,9 @@ function Menu({ addToCart, cartItems, updateQuantity }) {
       <ItemDetails
         item={selectedItem}
         onClose={handleCloseItemDetails}
-        addToCart={addToCart}
+        addToCart={handleAddToCart}
+        updateQuantity={handleUpdateQuantity}
+        getItemQuantity={getTotalItemQuantity}
         isVisible={isItemDetailsVisible}
       />
 

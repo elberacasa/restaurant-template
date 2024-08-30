@@ -46,18 +46,21 @@ function Carousel({ items, itemsToShow, itemsToScroll, onItemClick }) {
   return (
     <div className="relative">
       <div ref={sliderRef} className="keen-slider">
-        {items.map((item, index) => (
+        {items.map((item) => (
           <div key={item.id} className="keen-slider__slide">
             <motion.div
-              className="bg-white rounded-lg shadow-md overflow-hidden cursor-pointer"
+              className="bg-white rounded-lg shadow-md overflow-hidden cursor-pointer relative"
               whileHover={{ scale: 1.05 }}
               transition={{ duration: 0.3 }}
               onClick={() => onItemClick(item)}
             >
               <img src={item.image} alt={item.name} className="w-full h-40 object-cover" />
+              <div className="absolute top-0 right-0 bg-yellow-400 text-blue-800 px-2 py-1 rounded-bl-lg font-bold">
+                ${item.price.toFixed(2)}
+              </div>
               <div className="p-4">
-                <h3 className="text-lg font-semibold mb-2">{item.name}</h3>
-                <p className="text-gray-600">${item.price.toFixed(2)}</p>
+                <h3 className="text-lg font-semibold mb-2 truncate">{item.name}</h3>
+                <p className="text-gray-600 text-sm">Ver detalles</p>
               </div>
             </motion.div>
           </div>
